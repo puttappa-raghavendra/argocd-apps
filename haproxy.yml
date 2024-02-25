@@ -1,0 +1,33 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: demo-app
+spec:
+  destination:
+    name: ''
+    namespace: haproxy
+    server: 'https://kubernetes.default.svc'
+  sources: 
+    - repoURL: 'https://charts.bitnami.com/bitnami'
+      chart: haproxy
+      targetRevision: 0.16.2
+      helm:
+        valueFiles:
+        - $values/haproxy/values.yaml
+    - repoURL: 'https://github.com/puttappa-raghavendra/argocd-apps.git'
+      targetRevision: main
+      ref: values
+  project: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ApplyOutOfSyncOnly=true
+    retry:
+      limit: 2
+      backoff:
+        duration: 5s
+        maxDuration: 3m0s
+        factor: 2
