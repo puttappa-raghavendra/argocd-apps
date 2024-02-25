@@ -1,34 +1,44 @@
 apiVersion: argoproj.io/v1alpha1
-kind: Application
+kind: ApplicationSet
 metadata:
   name: haproxy-app
   namespace: argocd
 spec:
-  destination:
-    name: ''
-    namespace: haproxy
-    server: 'https://kubernetes.default.svc'
-  sources: 
-    - repoURL: 'https://charts.bitnami.com/bitnami'
-      chart: haproxy
-      targetRevision: 0.16.2
-      helm:
-        valueFiles:
-        - $values/haproxy/values.yaml
-    - repoURL: 'https://github.com/puttappa-raghavendra/argocd-apps.git'
-      targetRevision: main
-      ref: values
-  project: default
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
-    syncOptions:
-      - CreateNamespace=true
-      - ApplyOutOfSyncOnly=true
-    retry:
-      limit: 2
-      backoff:
-        duration: 5s
-        maxDuration: 3m0s
-        factor: 2
+  goTemplate: true
+  goTemplateOptions: ["missingkey=error"]
+  generators:
+  - clusters: 
+      selector:
+        matchLabels:
+          autodeploy: true
+  template:
+    metadata:
+      name: '{{.name}}-haproxy' # 'name' field of the Secret
+    spec:
+      project: "default"
+      sources: 
+      - repoURL: 'https://charts.bitnami.com/bitnami'
+        chart: nginx
+        targetRevision: 15.12.2
+        helm:
+          valueFiles:
+          - $values/haproxy/values.yaml
+      - repoURL: 'https://github.com/puttappa-raghavendra/argocd-apps.git'
+        targetRevision: main
+        ref: values
+      destination:
+        server: '{{.server}}' # 'server' field of the secret
+        namespace: haproxy
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
+          - ApplyOutOfSyncOnly=true
+        retry:
+          limit: 2
+          backoff:
+            duration: 5s
+            maxDuration: 3m0s
+            factor: 2
