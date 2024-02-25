@@ -7,16 +7,14 @@ spec:
     name: ''
     namespace: haproxy
     server: 'https://kubernetes.default.svc'
-  sources: 
+  source: 
     - repoURL: 'https://charts.bitnami.com/bitnami'
       chart: haproxy
       targetRevision: 0.16.2
       helm:
-        valueFiles:
-        - $values/haproxy/values.yaml
-    - repoURL: 'https://github.com/puttappa-raghavendra/argocd-apps'
-      targetRevision: main
-      ref: values
+        values: |
+          autoscaling:
+            minReplicas: 2
   project: default
   syncPolicy:
     automated:
