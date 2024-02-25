@@ -14,8 +14,8 @@ spec:
       helm:
         valueFiles:
         - $values/haproxy/values.yaml
-    - repoURL: 'https://github.com/puttappa-raghavendra/argocd-apps'
-      targetRevision: HEAD
+    - repoURL: 'https://github.com/puttappa-raghavendra/argocd-apps.git'
+      targetRevision: main
       ref: values
   project: default
   syncPolicy:
