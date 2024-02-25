@@ -10,7 +10,7 @@ spec:
   - clusters: 
       selector:
         matchLabels:
-          autodeploy: true
+          autodeploy: "true"
   template:
     metadata:
       name: '{{.name}}-haproxy' # 'name' field of the Secret
