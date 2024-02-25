@@ -18,8 +18,8 @@ spec:
       project: "default"
       sources: 
       - repoURL: 'https://charts.bitnami.com/bitnami'
-        chart: nginx
-        targetRevision: 15.12.2
+        chart: haproxy
+        targetRevision: 0.16.2
         helm:
           valueFiles:
           - $values/haproxy/values.yaml
